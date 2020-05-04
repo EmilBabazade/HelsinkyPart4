@@ -18,14 +18,54 @@ const lists = {
 		{
 			_id: '5a422aa71b54a676234d17f8',
 			title: 'Go To Statement Considered Harmful',
-			author: 'Edsger W. Dijkstra',
+			author: 'Edsger W. Dijkstra Jolly',
 			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 			likes: 5,
+			__v: 0,
+		},
+		{
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 42,
+			__v: 0,
+		}, {
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra Tom',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 10,
 			__v: 0,
 		}, {
 			_id: '5a422aa71b54a676234d17f8',
 			title: 'Go To Statement Considered Harmful',
 			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 4,
+			__v: 0,
+		},
+	],
+	with2AuthorsSameNumberOfBlogs: [
+		{
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra Tom',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 10,
+			__v: 0,
+		}, {
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 4,
+			__v: 0,
+		},
+		{
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'Go To Statement Considered Harmful',
+			author: 'Edsger W. Dijkstra Tom',
 			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 			likes: 10,
 			__v: 0,
@@ -51,7 +91,7 @@ describe('total likes ', () => {
 	})
 
 	test('of a bigger list is calculated correctly', () => {
-		expect(listHelper.totalLikes(lists.withManyBlogs)).toBe(19)
+		expect(listHelper.totalLikes(lists.withManyBlogs)).toBe(61)
 	})
 })
 
@@ -66,7 +106,7 @@ describe('Most liked ', () => {
 			title: 'Go To Statement Considered Harmful',
 			author: 'Edsger W. Dijkstra',
 			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-			likes: 10,
+			likes: 42,
 			__v: 0,
 		})
 	})
@@ -79,6 +119,26 @@ describe('Most liked ', () => {
 			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 			likes: 5,
 			__v: 0,
+		})
+	})
+})
+
+describe('Author with most blogs', () => {
+	test(' of empty list is undefined', () => {
+		expect(listHelper.mostBLogs(lists.withNoBlogs)).toEqual(undefined)
+	})
+
+	test(' of list with many blogs is selected correctly', () => {
+		expect(listHelper.mostBLogs(lists.withManyBlogs)).toEqual({
+			author: 'Edsger W. Dijkstra',
+			blogs: 2,
+		})
+	})
+
+	test(' of list with one blog is that author with 1 blog', () => {
+		expect(listHelper.mostBLogs(lists.withOneBLog)).toEqual({
+			author: 'Edsger W. Dijkstra',
+			blogs: 1,
 		})
 	})
 })
