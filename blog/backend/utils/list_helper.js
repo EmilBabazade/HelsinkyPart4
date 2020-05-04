@@ -10,7 +10,7 @@ const favoriteBlog = (blogs) => blogs.reduce((mostLiked, blog) => (
 ), { likes: 0 })
 
 const mostBLogs = (blogs) => {
-// map blogs to this [{author: '', blogs: 0}]
+// map blogs to this [{author: '', blogs: }]
 	let authorsAndBlogCounts = blogs.map((blog) => {
 		// *****each iteration*****
 		// filter the array to keep only the current author name
@@ -30,9 +30,36 @@ const mostBLogs = (blogs) => {
 		: current), authorsAndBlogCounts[0])
 }
 
+const mostLikes = (blogs) => {
+	// map blogs to this [{author: '', likes: }]
+	let authorsAndLikes = blogs.map((blog) => {
+		// *****each iteration*****
+		// filter the array to keep only the current author name
+		// and take the likes of the filtered new array as the likes: for the current author
+		// const likeCount = blogs.filter((blog_) => blog_.author === blog.author).length
+		const likeCount = blogs.reduce((likeSum, blog_) => (
+			blog_.author === blog.author
+				? likeSum + blog_.likes
+				: likeSum
+		), 0)
+		return {
+			author: blog.author,
+			likes: likeCount,
+		}
+	})
+	// delete duplicates
+	authorsAndLikes = authorsAndLikes
+		.filter((item, index, self) => index === self.indexOf(item))
+		// at the end just return the author with most blogs
+	return authorsAndLikes.reduce((max, current) => (max.likes >= current.likes
+		? max
+		: current), authorsAndLikes[0])
+}
+
 module.exports = {
 	dummy,
 	totalLikes,
 	favoriteBlog,
 	mostBLogs,
+	mostLikes,
 }
