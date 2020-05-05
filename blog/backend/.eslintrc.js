@@ -34,6 +34,7 @@ module.exports = {
 		],
 		'consistent-return': 'off',
 		'no-console': 'off',
-		'no-tabs': 'off'
+		'no-tabs': 'off',
+		'no-underscore-dangle': 'off'
 	}
 };
