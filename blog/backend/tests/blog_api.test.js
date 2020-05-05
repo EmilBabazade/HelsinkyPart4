@@ -9,7 +9,6 @@ const api = supertest(app)
 beforeEach(async () => {
 	// initialize db with initial blogs from helper file
 	await Blog.deleteMany({})
-	console.log('done')
 	const blogObjs = helper.initialBlogs.map((b) => new Blog(b))
 	const promiseArr = blogObjs.map((b) => b.save())
 	await Promise.all(promiseArr)
@@ -77,6 +76,38 @@ test('if the likes property of blog is missing from create request, it will defa
 	const blogs = await helper.blogsInDB()
 	const createdBlogLikes = blogs[blogs.length - 1].likes
 	expect(createdBlogLikes).toBe(0)
+})
+
+test('if title is missing from blog then POST .../api/blogs/ returns status 400', async () => {
+	const blog = new Blog({
+		_id: '5a422aa71b54a676234d17f8',
+		author: 'Edsger W. Dijkstra',
+		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+	})
+
+	await api
+		.post('/api/blogs/')
+		.send(blog)
+		.expect(400)
+
+	const blogs = await helper.blogsInDB()
+	expect(blogs).toHaveLength(helper.initialBlogs.length)
+})
+
+test('if url is missing from blog then POST .../api/blogs/ returns status 400', async () => {
+	const blog = new Blog({
+		_id: '5a422aa71b54a676234d17f8',
+		author: 'Edsger W. Dijkstra',
+		title: 'fefel',
+	})
+
+	await api
+		.post('/api/blogs/')
+		.send(blog)
+		.expect(400)
+
+	const blogs = await helper.blogsInDB()
+	expect(blogs).toHaveLength(helper.initialBlogs.length)
 })
 
 afterAll(() => {
