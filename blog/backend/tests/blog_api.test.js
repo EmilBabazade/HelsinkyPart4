@@ -14,101 +14,121 @@ beforeEach(async () => {
 	await Promise.all(promiseArr)
 })
 
-test('a blog has id property but no _id and no _v', async () => {
-	// if you try helper.blogsInDB()[0] first expect line will get undefined
-	// no clue why but, yeah, don't break that
-	const blogs = await helper.blogsInDB()
-	const blog = blogs[0]
-	expect(blog.id).toBeDefined()
-	expect(blog._id).not.toBeDefined()
-	expect(blog._v).not.toBeDefined()
-})
-
-test('blogs are returned as json', async () => {
-	await api
-		.get('/api/blogs/')
-		.expect(200)
-		.expect('Content-Type', /application\/json/)
-})
-
-test('GET .../api/blogs/ returns correct number of blogs', async () => {
-	const blogs = await api
-		.get('/api/blogs/')
-		.expect(200)
-		.expect('Content-Type', /application\/json/)
-	expect(blogs.body).toHaveLength(helper.initialBlogs.length)
-})
-
-test('POST .../api/blogs/ succesfully creates a blogpost', async () => {
-	const blog = new Blog({
-		title: 'I like dogs',
-		author: 'Edsger W. Dijkstra',
-		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-		likes: 99,
+describe('when there is initially some notes saved', () => {
+	test('a blog has id property but no _id and no _v', async () => {
+		// if you try helper.blogsInDB()[0] first expect line will get undefined
+		// no clue why but, yeah, don't break that
+		const blogs = await helper.blogsInDB()
+		const blog = blogs[0]
+		expect(blog.id).toBeDefined()
+		expect(blog._id).not.toBeDefined()
+		expect(blog._v).not.toBeDefined()
 	})
 
-	await api
-		.post('/api/blogs/')
-		.send(blog)
-		.expect(201)
-		.expect('Content-Type', /application\/json/)
-
-	const blogsAtEnd = await helper.blogsInDB()
-	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-	const titles = blogsAtEnd.map((b) => b.title)
-	expect(titles).toContain('I like dogs')
-})
-
-test('if the likes property of blog is missing from create request, it will default to the value 0', async () => {
-	const blog = new Blog({
-		_id: '5a422aa71b54a676234d17f8',
-		title: 'I like dogs',
-		author: 'Edsger W. Dijkstra',
-		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+	test('blogs are returned as json', async () => {
+		await api
+			.get('/api/blogs/')
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
 	})
 
-	await api
-		.post('/api/blogs/')
-		.send(blog)
-		.expect(201)
-		.expect('Content-Type', /application\/json/)
-
-	const blogs = await helper.blogsInDB()
-	const createdBlogLikes = blogs[blogs.length - 1].likes
-	expect(createdBlogLikes).toBe(0)
+	test('GET .../api/blogs/ returns correct number of blogs', async () => {
+		const blogs = await api
+			.get('/api/blogs/')
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+		expect(blogs.body).toHaveLength(helper.initialBlogs.length)
+	})
 })
 
-test('if title is missing from blog then POST .../api/blogs/ returns status 400', async () => {
-	const blog = new Blog({
-		_id: '5a422aa71b54a676234d17f8',
-		author: 'Edsger W. Dijkstra',
-		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+
+describe('creating a blogpost', () => {
+	test('POST .../api/blogs/ succesfully creates a blogpost', async () => {
+		const blog = new Blog({
+			title: 'I like dogs',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+			likes: 99,
+		})
+
+		await api
+			.post('/api/blogs/')
+			.send(blog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+
+		const blogsAtEnd = await helper.blogsInDB()
+		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+		const titles = blogsAtEnd.map((b) => b.title)
+		expect(titles).toContain('I like dogs')
 	})
 
-	await api
-		.post('/api/blogs/')
-		.send(blog)
-		.expect(400)
+	test('if the likes property of blog is missing from create request, it will default to the value 0', async () => {
+		const blog = new Blog({
+			_id: '5a422aa71b54a676234d17f8',
+			title: 'I like dogs',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+		})
 
-	const blogs = await helper.blogsInDB()
-	expect(blogs).toHaveLength(helper.initialBlogs.length)
-})
+		await api
+			.post('/api/blogs/')
+			.send(blog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
 
-test('if url is missing from blog then POST .../api/blogs/ returns status 400', async () => {
-	const blog = new Blog({
-		_id: '5a422aa71b54a676234d17f8',
-		author: 'Edsger W. Dijkstra',
-		title: 'fefel',
+		const blogs = await helper.blogsInDB()
+		const createdBlogLikes = blogs[blogs.length - 1].likes
+		expect(createdBlogLikes).toBe(0)
 	})
 
-	await api
-		.post('/api/blogs/')
-		.send(blog)
-		.expect(400)
+	test('if title is missing from blog then POST .../api/blogs/ returns status 400', async () => {
+		const blog = new Blog({
+			_id: '5a422aa71b54a676234d17f8',
+			author: 'Edsger W. Dijkstra',
+			url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+		})
 
-	const blogs = await helper.blogsInDB()
-	expect(blogs).toHaveLength(helper.initialBlogs.length)
+		await api
+			.post('/api/blogs/')
+			.send(blog)
+			.expect(400)
+
+		const blogs = await helper.blogsInDB()
+		expect(blogs).toHaveLength(helper.initialBlogs.length)
+	})
+
+	test('if url is missing from blog then POST .../api/blogs/ returns status 400', async () => {
+		const blog = new Blog({
+			_id: '5a422aa71b54a676234d17f8',
+			author: 'Edsger W. Dijkstra',
+			title: 'fefel',
+		})
+
+		await api
+			.post('/api/blogs/')
+			.send(blog)
+			.expect(400)
+
+		const blogs = await helper.blogsInDB()
+		expect(blogs).toHaveLength(helper.initialBlogs.length)
+	})
 })
+
+describe('deleting a blogpost', () => {
+	test('deletes the blogpost with status 204', async () => {
+		const blogsAtStart = await helper.blogsInDB()
+		const { id } = blogsAtStart[0]
+
+		const deltedBlog = await api
+			.delete(`/api/blogs/${id}`)
+			.expect(204)
+
+		const blogsAtEnd = await helper.blogsInDB()
+		expect(blogsAtEnd).not.toContain(deltedBlog)
+	})
+})
+
 
 afterAll(() => {
 	mongoose.connection.close()

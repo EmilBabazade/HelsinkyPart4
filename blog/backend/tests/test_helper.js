@@ -3,22 +3,26 @@ const Blog = require('../modules/blog')
 // initial blogs
 const initialBlogs = [
 	{
+		id: '5a422aa71b54a676234d17c8',
 		title: 'Go To Statement Considered Harmful',
 		author: 'Edsger W. Dijkstra Jolly',
 		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 		likes: 5,
 	},
 	{
+		id: '5a422aa71b54a676234d17b8',
 		title: 'Go To Statement Considered Harmful',
 		author: 'Edsger W. Dijkstra',
 		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 		likes: 42,
 	}, {
+		id: '5a422aa71b54a676234d17a8',
 		title: 'Go To Statement Considered Harmful',
 		author: 'Edsger W. Dijkstra Tom',
 		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
 		likes: 10,
 	}, {
+		id: '5a422aa71b54a676234d17a8',
 		title: 'Go To Statement Considered Harmful',
 		author: 'Edsger W. Dijkstra',
 		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
