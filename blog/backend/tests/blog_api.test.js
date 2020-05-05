@@ -32,7 +32,7 @@ test('blogs are returned as json', async () => {
 		.expect('Content-Type', /application\/json/)
 })
 
-test('GET .../api/blogs returns correct number of blogs', async () => {
+test('GET .../api/blogs/ returns correct number of blogs', async () => {
 	const blogs = await api
 		.get('/api/blogs/')
 		.expect(200)
@@ -40,6 +40,25 @@ test('GET .../api/blogs returns correct number of blogs', async () => {
 	expect(blogs.body).toHaveLength(helper.initialBlogs.length)
 })
 
+test('POST .../api/blogs/ succesfully creates a blogpost', async () => {
+	const blog = new Blog({
+		title: 'I like dogs',
+		author: 'Edsger W. Dijkstra',
+		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+		likes: 99,
+	})
+
+	await api
+		.post('/api/blogs/')
+		.send(blog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const blogsAtEnd = await helper.blogsInDB()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+	const titles = blogsAtEnd.map((b) => b.title)
+	expect(titles).toContain('I like dogs')
+})
 
 afterAll(() => {
 	mongoose.connection.close()

@@ -28,7 +28,7 @@ const initialBlogs = [
 // get all blogs from db
 const blogsInDB = async () => {
 	const blogs = await Blog.find({})
-	return blogs.map((b) => b.toJSON())
+	return blogs.map((blog) => blog.toJSON())
 }
 
 // get id of a deleted blog
