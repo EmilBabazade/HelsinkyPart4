@@ -5,12 +5,9 @@ require('express-async-errors')
 
 const blogRouter = express.Router()
 
-blogRouter.get('/', (request, response) => {
-	Blog
-		.find({})
-		.then((blogs) => {
-			response.json(blogs.map((blog) => blog.toJSON()))
-		})
+blogRouter.get('/', async (req, res) => {
+	const blogs = await Blog.find({})
+	return res.json(blogs.map((blog) => blog.toJSON()))
 })
 
 blogRouter.post('/', (request, response) => {
