@@ -60,6 +60,25 @@ test('POST .../api/blogs/ succesfully creates a blogpost', async () => {
 	expect(titles).toContain('I like dogs')
 })
 
+test('if the likes property of blog is missing from create request, it will default to the value 0', async () => {
+	const blog = new Blog({
+		_id: '5a422aa71b54a676234d17f8',
+		title: 'I like dogs',
+		author: 'Edsger W. Dijkstra',
+		url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+	})
+
+	await api
+		.post('/api/blogs/')
+		.send(blog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const blogs = await helper.blogsInDB()
+	const createdBlogLikes = blogs[blogs.length - 1].likes
+	expect(createdBlogLikes).toBe(0)
+})
+
 afterAll(() => {
 	mongoose.connection.close()
 })
