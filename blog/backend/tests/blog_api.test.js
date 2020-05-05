@@ -15,23 +15,31 @@ beforeEach(async () => {
 	await Promise.all(promiseArr)
 })
 
-
-describe('Many blogs operations', () => {
-	test('blogs are returned as json', async () => {
-		await api
-			.get('/api/blogs/')
-			.expect(200)
-			.expect('Content-Type', /application\/json/)
-	})
-
-	test('GET .../api/blogs returns correct number of blogs', async () => {
-		const blogs = await api
-			.get('/api/blogs/')
-			.expect(200)
-			.expect('Content-Type', /application\/json/)
-		expect(blogs.body).toHaveLength(helper.initialBlogs.length)
-	})
+test('a blog has id property but no _id and no _v', async () => {
+	// if you try helper.blogsInDB()[0] first expect line will get undefined
+	// no clue why but, yeah, don't break that
+	const blogs = await helper.blogsInDB()
+	const blog = blogs[0]
+	expect(blog.id).toBeDefined()
+	expect(blog._id).not.toBeDefined()
+	expect(blog._v).not.toBeDefined()
 })
+
+test('blogs are returned as json', async () => {
+	await api
+		.get('/api/blogs/')
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
+})
+
+test('GET .../api/blogs returns correct number of blogs', async () => {
+	const blogs = await api
+		.get('/api/blogs/')
+		.expect(200)
+		.expect('Content-Type', /application\/json/)
+	expect(blogs.body).toHaveLength(helper.initialBlogs.length)
+})
+
 
 afterAll(() => {
 	mongoose.connection.close()
