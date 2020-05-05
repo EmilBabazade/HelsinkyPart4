@@ -15,6 +15,19 @@ beforeEach(async () => {
 })
 
 describe('when there is initially some notes saved', () => {
+	test('database is correctly initialized', async () => {
+		let blogs = await helper.blogsInDB()
+		const mapper = (blog) => ({
+			title: blog.title,
+			author: blog.author,
+			url: blog.url,
+			likes: blog.likes,
+		})
+		blogs = blogs.map(mapper)
+		const initialBlogs = helper.initialBlogs.map(mapper)
+		expect(blogs).toEqual(initialBlogs)
+	})
+
 	test('a blog has id property but no _id and no _v', async () => {
 		// if you try helper.blogsInDB()[0] first expect line will get undefined
 		// no clue why but, yeah, don't break that
@@ -126,6 +139,24 @@ describe('deleting a blogpost', () => {
 
 		const blogsAtEnd = await helper.blogsInDB()
 		expect(blogsAtEnd).not.toContain(deltedBlog)
+	})
+})
+
+describe('updating likes of a blogpost', () => {
+	test('PUT .../api/blogs/:id succesfully updates likes of a blogpost', async () => {
+		const blogs = await helper.blogsInDB()
+		const blog = blogs[0]
+		blog.likes += 5
+
+		const request = await api
+			.put(`/api/blogs/${blog.id}`)
+			.send(blog)
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+
+		const updatedBlog = request.body
+		expect(updatedBlog.likes).toBe(blog.likes)
+		expect(updatedBlog.id).toBe(blog.id)
 	})
 })
 
