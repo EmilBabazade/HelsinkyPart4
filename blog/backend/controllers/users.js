@@ -9,6 +9,12 @@ const userRouter = express.Router()
 userRouter.post('/', async (req, res) => {
 	const { body } = req
 
+	if (body.password.length < 3) {
+		const err = new Error()
+		err.name = 'invalid password'
+		err.message = 'password must be at least 3 characters long'
+		throw err
+	}
 	const passwordHash = await bcrypt.hash(body.password, 10)
 
 	const user = new User({
@@ -19,7 +25,7 @@ userRouter.post('/', async (req, res) => {
 
 	const savedUser = await user.save()
 
-	res.json(savedUser)
+	res.status(201).json(savedUser.toJSON())
 })
 
 // get all the users
@@ -27,7 +33,7 @@ userRouter.get('/', async (req, res) => {
 	const users = await User.find({})
 		.populate('blogs', { title: 1, author: 1 })
 
-	res.json(users)
+	res.json(users.map((user) => user.toJSON()))
 })
 
 module.exports = userRouter

@@ -5,7 +5,10 @@ const errorHandler = (err, req, res, next) => {
 	logger.error(err)
 
 	if (err.name === 'ValidationError') {
-		res.status(400).json({ error: err.message })
+		return res.status(400).json({ error: err.message })
+	}
+	if (err.name === 'invalid password') {
+		return res.status(400).json({ error: err.message })
 	}
 
 	next(err)
